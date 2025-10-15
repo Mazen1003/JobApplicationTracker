@@ -32,9 +32,11 @@
         }
         public string GetSummary()
         {
-            string response = ResponseDate.HasValue ? ResponseDate.Value.ToShortDateString() : "No response yet";
-            return $"{CompanyName} - {PositionTitle} | Status: {Status} | {response}";
+            string response = ResponseDate.HasValue
+                ? $"Response: {ResponseDate.Value.ToShortDateString()}"
+                : "No response yet";
 
+            return $"{CompanyName} - {PositionTitle} | Status: {Status} | {response}";
         }
 
 
