@@ -6,6 +6,7 @@ internal class Program
     static void Main(string[] args)
     {
         JobManager manager = new JobManager();
+        manager.SeedDummyData();
         bool running = true;
 
         while (running) {
@@ -17,8 +18,11 @@ internal class Program
             Console.WriteLine("2. Show all applications");
             Console.WriteLine("3. Update application status");
             Console.WriteLine("4. Remove an application");
-            Console.WriteLine("5. Exit");
-            Console.WriteLine("choose an option (1-5):");
+            Console.WriteLine("5. Filter by status");
+            Console.WriteLine("6. Show statistics");
+            Console.WriteLine("7. Show applications sorted by date");
+            Console.WriteLine("8. Exit");
+            Console.WriteLine("choose an option (1-8):");
 
             string choice = Console.ReadLine();
 
@@ -28,7 +32,7 @@ internal class Program
                     AddNewApplication(manager);
                     break;
                 case "2":
-                   manager.ShowAll();
+                    manager.ShowAll();
                     Pause();
                     break;
                 case "3":
@@ -38,6 +42,18 @@ internal class Program
                     RemoveApplication(manager);
                     break;
                 case "5":
+                    manager.FilterByStatus(ApplicationStatus.Applied);
+                    Pause();
+                    break;
+                case "6":
+                    manager.ShowStatistics();
+                    Pause();
+                    break;
+                case "7":
+                    manager.ShowSortedByDate();
+                    Pause();
+                    break;
+                case "8":
                     running = false;
                     break;
                 default:
@@ -111,6 +127,27 @@ internal class Program
         string company = Console.ReadLine();
 
         manager.RemoveJob(company);
+    }
+    static void FilterByStatus(JobManager manager)
+    {
+        Console.Clear();
+        Console.WriteLine("Available statuses:");
+        foreach (var status in Enum.GetValues(typeof(ApplicationStatus)))
+        {
+            Console.WriteLine($"- {status}");
+        }
+
+        Console.Write("Enter status to filter: ");
+        string input = Console.ReadLine();
+
+        if (Enum.TryParse(input, true, out ApplicationStatus chosenStatus))
+        {
+            manager.ShowByStatus(chosenStatus);
+        }
+        else
+        {
+            Console.WriteLine("Invalid status entered!");
+        }
     }
 
     static void Pause()
