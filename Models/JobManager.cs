@@ -8,24 +8,59 @@ namespace JobApplicationTracker.Models
 
 
         //metod för att lägga till en jobbansökan
-        public void AddJob(JobApplication job)
+        public void AddJob()
         {
-            JobApplications.Add(job);
+            Console.WriteLine("Enter Company Name:");
+            string companyName = Console.ReadLine();
+            Console.WriteLine("Enter Position Title:");
+            string positionTitle = Console.ReadLine();
+            Console.WriteLine("Enter date of application (yyyy-mm-dd)");
+            string dateInput = Console.ReadLine();
+            DateTime applicationDate;
+            if (!DateTime.TryParse(dateInput, out applicationDate))
+            {
+                Console.WriteLine("Invalid date format. Job application not added.");
+                return;
+            }
+            Console.WriteLine("Enter Salary Expectation (in SEK):");
+            if (!int.TryParse(Console.ReadLine(), out int salaryExpectation))
+            {
+                Console.WriteLine("Invalid salary input. Job application not added.");
+                return;
+            }
+
+            JobApplication newJob = new JobApplication(companyName, positionTitle, ApplicationStatus.Applied, salaryExpectation, applicationDate);
+            JobApplications.Add(newJob);
+
             Console.WriteLine("Job application added successfully.");
+            
+
         }
         //metod för att ändra status på en befintlig jobbansökan
-        public void UpdateStatus(string companyName, ApplicationStatus newStatus)
+        public void UpdateStatus()
         {
+            Console.WriteLine("Enter Company Name of the application to update:");
+            string companyName = Console.ReadLine();
             var job = JobApplications.FirstOrDefault(j => j.CompanyName.Equals(companyName, StringComparison.OrdinalIgnoreCase));
-            if (job != null)
+            if (job == null)
+            {
+                Console.WriteLine("Job application not found.");
+                return;
+            }
+            Console.WriteLine("Select new status:");
+
+
+            if (Enum.TryParse<ApplicationStatus>(Console.ReadLine(), true, out ApplicationStatus newStatus))
+
             {
                 job.Status = newStatus;
                 Console.WriteLine("Job application status updated successfully.");
             }
             else
             {
-                Console.WriteLine("Job application not found.");
+                Console.WriteLine("Invalid status input. Status not updated.");
             }
+            
         }
         //metod för att visa alla jobbansökningar
         public void ShowAll()
@@ -38,23 +73,12 @@ namespace JobApplicationTracker.Models
             Console.WriteLine("All Job Applications:");
             foreach (var job in JobApplications)
             {
+                
                 Console.WriteLine(job.GetSummary());
             }
+            
         }
-        //metod för att filtrera jobbansökningar baserat på status med hjälp av LINQ
-        public void FilterByStatus(ApplicationStatus status)
-        {
-            var filteredJobs = JobApplications.Where(j => j.Status == status).ToList();
-            if (filteredJobs.Count == 0)
-            {
-                Console.WriteLine($"No job applications found with status: {status}");
-                return;
-            }
-            foreach (var job in filteredJobs)
-            {
-                Console.WriteLine(job.GetSummary());
-            }
-        }
+      
         //metod som visar statistik med LINQ (Count, Average, OrderBy, Where)
         public void ShowStatistics()
         {
@@ -76,158 +100,81 @@ namespace JobApplicationTracker.Models
             {
                 Console.WriteLine($"{group.Status}: {group.Count}");
             }
+            
         }
         //metod för att ta bort en jobbansökan
-        public void RemoveJob(string companyName)
+        public void RemoveJob()
         {
-            var job = JobApplications.FirstOrDefault(j => j.CompanyName.Equals(companyName, StringComparison.OrdinalIgnoreCase));
-            if (job != null)
-            {
-                JobApplications.Remove(job);
-                Console.WriteLine("Job application removed successfully.");
-            }
-            else
+            Console.WriteLine("Enter Company Name of the application to remove:");
+            string name = Console.ReadLine();
+            var job = JobApplications.FirstOrDefault(j => j.CompanyName.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (job == null)
             {
                 Console.WriteLine("Job application not found.");
+                return;
             }
+            JobApplications.Remove(job);
+            Console.WriteLine("Job application removed successfully.");
+
+           
         }
         //metod för att filtrerar ansökningar baserat på status.
         public void ShowSortedByDate()
         {
-            var ordered = JobApplications
-                .OrderBy(a => a.ApplicationDate)
-                .ToList();
-
-            if (ordered.Count == 0)
-            {
-                Console.WriteLine("No applications to show.");
-                return;
-            }
-
-            Console.WriteLine("=== Applications sorted by date ===");
-            foreach (var job in ordered)
+            var sortedJobs = JobApplications.OrderBy(j => j.ApplicationDate).ToList();
+            Console.WriteLine("Job Applications sorted by Application Date:");
+            foreach (var job in sortedJobs)
             {
                 Console.WriteLine(job.GetSummary());
             }
 
+
         }
-        public void ShowByStatus(ApplicationStatus status)
+        //metod för att filtrera ansökningar baserat på status
+        public void ShowByStatus()
         {
-            var filtered = JobApplications
-                .Where(a => a.Status == status)
-                .ToList();
+            Console.WriteLine("Enter status to filter by (Applied, Interview, Offer, Rejected):");
+            string input = Console.ReadLine();
 
-            if (filtered.Count == 0)
+            if (Enum.TryParse(input, true, out ApplicationStatus status))
             {
-                Console.WriteLine($"No applications found with status: {status}");
-                return;
+                var filteredJobs = JobApplications.Where(j => j.Status == status).ToList();
+                if (filteredJobs.Count == 0)
+                {
+                    Console.WriteLine($"No job applications found with status: {status}");
+                    return;
+                }
+                foreach (var job in filteredJobs)
+                {
+                    Console.WriteLine(job.GetSummary());
+                }
             }
-
-            Console.WriteLine($"=== Applications with status: {status} ===");
-            foreach (var job in filtered)
-            {
-                Console.WriteLine(job.GetSummary());
-            }
-
+            
         }
+        //metod för att lägga till några dummydata för testning
         public void SeedDummyData()
         {
-            JobApplications = new List<JobApplication>
-    {
-        new JobApplication
-        {
-            CompanyName = "Techify AB",
-            PositionTitle = "Software Developer",
-            Status = ApplicationStatus.Applied,
-            ApplicationDate = DateTime.Now.AddDays(-10),
-            ResponseDate = null,
-            SalaryExpectation = 40000
-        },
-        new JobApplication
-        {
-            CompanyName = "NextGen IT",
-            PositionTitle = "Frontend Engineer",
-            Status = ApplicationStatus.Interview,
-            ApplicationDate = DateTime.Now.AddDays(-20),
-            ResponseDate = DateTime.Now.AddDays(-15),
-            SalaryExpectation = 42000
-        },
-        new JobApplication
-        {
-            CompanyName = "DataWorks",
-            PositionTitle = "Data Analyst",
-            Status = ApplicationStatus.Offer,
-            ApplicationDate = DateTime.Now.AddDays(-30),
-            ResponseDate = DateTime.Now.AddDays(-25),
-            SalaryExpectation = 45000
-        },
-        new JobApplication
-        {
-            CompanyName = "CloudCorp",
-            PositionTitle = "System Administrator",
-            Status = ApplicationStatus.Rejected,
-            ApplicationDate = DateTime.Now.AddDays(-40),
-            ResponseDate = DateTime.Now.AddDays(-35),
-            SalaryExpectation = 38000
-        },
-        new JobApplication
-        {
-            CompanyName = "FinTech Nordic",
-            PositionTitle = "Backend Developer",
-            Status = ApplicationStatus.Applied,
-            ApplicationDate = DateTime.Now.AddDays(-5),
-            ResponseDate = null,
-            SalaryExpectation = 46000
-        },
-        new JobApplication
-        {
-            CompanyName = "BrightApps",
-            PositionTitle = "Mobile Developer",
-            Status = ApplicationStatus.Interview,
-            ApplicationDate = DateTime.Now.AddDays(-18),
-            ResponseDate = DateTime.Now.AddDays(-10),
-            SalaryExpectation = 44000
-        },
-        new JobApplication
-        {
-            CompanyName = "SecureTech",
-            PositionTitle = "Cybersecurity Specialist",
-            Status = ApplicationStatus.Applied,
-            ApplicationDate = DateTime.Now.AddDays(-7),
-            ResponseDate = null,
-            SalaryExpectation = 50000
-        },
-        new JobApplication
-        {
-            CompanyName = "EcoSystems AB",
-            PositionTitle = "Full Stack Developer",
-            Status = ApplicationStatus.Offer,
-            ApplicationDate = DateTime.Now.AddDays(-22),
-            ResponseDate = DateTime.Now.AddDays(-17),
-            SalaryExpectation = 47000
-        },
-        new JobApplication
-        {
-            CompanyName = "CloudNova",
-            PositionTitle = "DevOps Engineer",
-            Status = ApplicationStatus.Rejected,
-            ApplicationDate = DateTime.Now.AddDays(-60),
-            ResponseDate = DateTime.Now.AddDays(-55),
-            SalaryExpectation = 49000
-        },
-        new JobApplication
-        {
-            CompanyName = "HealthTech Solutions",
-            PositionTitle = "QA Tester",
-            Status = ApplicationStatus.Interview,
-            ApplicationDate = DateTime.Now.AddDays(-14),
-            ResponseDate = DateTime.Now.AddDays(-12),
-            SalaryExpectation = 39000
-        }
-            };
+            JobApplications.Add(new JobApplication("Volvo", "Software Engineer", ApplicationStatus.Applied, 60000, DateTime.Now.AddDays(-10)));
+            JobApplications.Add(new JobApplication("ICA", "Data Analyst", ApplicationStatus.Interview, 55000, DateTime.Now.AddDays(-20)));
+            JobApplications.Add(new JobApplication("IKEA", "Frontend Developer", ApplicationStatus.Offer, 65000, DateTime.Now.AddDays(-15)));
+            JobApplications.Add(new JobApplication("Apple", "Dev", ApplicationStatus.Rejected, 70000, DateTime.Now.AddDays(-5)));
+
         }
     }
-    
-    
-    } 
+}
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

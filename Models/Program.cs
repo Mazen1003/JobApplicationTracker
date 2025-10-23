@@ -9,7 +9,8 @@ internal class Program
         manager.SeedDummyData();
         bool running = true;
 
-        while (running) {
+        while (running)
+        { // Huvudmeny loop
             Console.Clear();
             Console.WriteLine("==============================");
             Console.WriteLine("JOB APPLICATION TRACKER");
@@ -22,139 +23,51 @@ internal class Program
             Console.WriteLine("6. Show statistics");
             Console.WriteLine("7. Show applications sorted by date");
             Console.WriteLine("8. Exit");
-            Console.WriteLine("choose an option (1-8):");
+            Console.WriteLine("choose an option (1-7):");
 
             string choice = Console.ReadLine();
-
+            // Hantera användarens val
             switch (choice)
             {
                 case "1":
-                    AddNewApplication(manager);
+                    manager.AddJob();
                     break;
                 case "2":
                     manager.ShowAll();
-                    Pause();
                     break;
                 case "3":
-                    UpdateApplicationStatus(manager);
+                    manager.UpdateStatus();
                     break;
                 case "4":
-                    RemoveApplication(manager);
+                    manager.RemoveJob();
                     break;
                 case "5":
-                    manager.FilterByStatus(ApplicationStatus.Applied);
-                    Pause();
+                    manager.ShowByStatus();
                     break;
                 case "6":
-                    manager.ShowStatistics();
-                    Pause();
+                    manager.ShowStatistics();                   
                     break;
                 case "7":
                     manager.ShowSortedByDate();
-                    Pause();
                     break;
                 case "8":
                     running = false;
                     break;
                 default:
-                    Console.WriteLine("Invalid choice. Press any key to try again.");
-                    Console.ReadKey();
+                    Console.WriteLine("Invalid choice. Try again.");             
                     break;
+            }
+            if (running)
+            {
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
             }
 
 
 
-
         }
 
 
-    }
-    static void AddNewApplication(JobManager manager)
-    {
-        Console.Clear();
-        Console.Write("Company name: ");
-        string company = Console.ReadLine();
-
-        Console.Write("Position title: ");
-        string title = Console.ReadLine();
-
-        Console.Write("Expected salary (SEK): ");
-        int salary = int.Parse(Console.ReadLine());
-
-        var newJob = new JobApplication
-        {
-            CompanyName = company,
-            PositionTitle = title,
-            ApplicationDate = DateTime.Now,
-            Status = ApplicationStatus.Applied,
-            SalaryExpectation = salary
-        };
-
-        manager.AddJob(newJob);
-        Console.WriteLine("✅ Application added!");
-        Pause();
-    }
-
-    static void UpdateApplicationStatus(JobManager manager)
-    {
-        Console.Clear();
-        Console.Write("Enter company name: ");
-        string company = Console.ReadLine();
-
-        Console.WriteLine("Available statuses:");
-        foreach (var status in Enum.GetValues(typeof(ApplicationStatus)))
-        {
-            Console.WriteLine($"- {status}");
-        }
-
-        Console.Write("Enter new status: ");
-        string statusInput = Console.ReadLine();
-
-        if (Enum.TryParse(statusInput, true, out ApplicationStatus newStatus))
-        {
-            manager.UpdateStatus(company, newStatus);
-        }
-        else
-        {
-            Console.WriteLine("❌ Invalid status!");
-        }
-    }
-
-    static void RemoveApplication(JobManager manager)
-    {
-        Console.Clear();
-        Console.Write("Enter company name to remove: ");
-        string company = Console.ReadLine();
-
-        manager.RemoveJob(company);
-    }
-    static void FilterByStatus(JobManager manager)
-    {
-        Console.Clear();
-        Console.WriteLine("Available statuses:");
-        foreach (var status in Enum.GetValues(typeof(ApplicationStatus)))
-        {
-            Console.WriteLine($"- {status}");
-        }
-
-        Console.Write("Enter status to filter: ");
-        string input = Console.ReadLine();
-
-        if (Enum.TryParse(input, true, out ApplicationStatus chosenStatus))
-        {
-            manager.ShowByStatus(chosenStatus);
-        }
-        else
-        {
-            Console.WriteLine("Invalid status entered!");
-        }
-    }
-
-    static void Pause()
-    {
-        Console.WriteLine("\nPress any key to continue...");
-        Console.ReadKey();
     }
 
 }
-

@@ -26,6 +26,15 @@
         public DateTime? ResponseDate { get; set; }
         public int SalaryExpectation { get; set; }
 
+        public JobApplication(string companyName, string positionTitle, ApplicationStatus status, int salaryExpectation, DateTime applicationDate)
+        {
+            CompanyName = companyName;
+            PositionTitle = positionTitle;
+            Status = status;
+            ApplicationDate = applicationDate;
+            SalaryExpectation = salaryExpectation;
+        }
+
         public int GetDaysSinceApplied()
         {
             return (DateTime.Now - ApplicationDate).Days;
@@ -36,7 +45,7 @@
                 ? $"Response: {ResponseDate.Value.ToShortDateString()}"
                 : "No response yet";
 
-            return $"{CompanyName} - {PositionTitle} | Status: {Status} | {response}";
+            return $"{CompanyName} - {PositionTitle} | Status: {Status} | Applied: {ApplicationDate.ToShortDateString()}";
         }
 
 
