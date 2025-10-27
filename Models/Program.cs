@@ -20,9 +20,8 @@ internal class Program
             Console.WriteLine("3. Update application status");
             Console.WriteLine("4. Remove an application");
             Console.WriteLine("5. Filter by status");
-            Console.WriteLine("6. Show statistics");
-            Console.WriteLine("7. Show applications sorted by date");
-            Console.WriteLine("8. Exit");
+            Console.WriteLine("6. Show applications sorted by date");
+            Console.WriteLine("7. Exit");
             Console.WriteLine("choose an option (1-7):");
 
             string choice = Console.ReadLine();
@@ -43,14 +42,11 @@ internal class Program
                     break;
                 case "5":
                     manager.ShowByStatus();
-                    break;
+                    break;                
                 case "6":
-                    manager.ShowStatistics();                   
-                    break;
-                case "7":
                     manager.ShowSortedByDate();
                     break;
-                case "8":
+                case "7":
                     running = false;
                     break;
                 default:
