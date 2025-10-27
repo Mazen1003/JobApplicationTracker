@@ -78,30 +78,7 @@ namespace JobApplicationTracker.Models
             }
             
         }
-      
-        //metod som visar statistik med LINQ (Count, Average, OrderBy, Where)
-        public void ShowStatistics()
-        {
-            if (JobApplications.Count == 0)
-            {
-                Console.WriteLine("No job applications to show statistics.");
-                return;
-            }
-            var totalApplications = JobApplications.Count;
-            var averageSalary = JobApplications.Average(j => j.SalaryExpectation);
-            var applicationsByStatus = JobApplications
-                .GroupBy(j => j.Status)
-                .Select(g => new { Status = g.Key, Count = g.Count() })
-                .OrderByDescending(g => g.Count);
-            Console.WriteLine($"Total Applications: {totalApplications}");
-            Console.WriteLine($"Average Salary Expectation: {averageSalary:C}");
-            Console.WriteLine("Applications by Status:");
-            foreach (var group in applicationsByStatus)
-            {
-                Console.WriteLine($"{group.Status}: {group.Count}");
-            }
-            
-        }
+    
         //metod för att ta bort en jobbansökan
         public void RemoveJob()
         {
